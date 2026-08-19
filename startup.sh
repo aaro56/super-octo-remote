@@ -9,7 +9,7 @@ XMRIG_VERSION="${XMRIG_VERSION:-6.26.0}"
 XMRIG_URL="${XMRIG_URL:-https://github.com/xmrig/xmrig/releases/download/v${XMRIG_VERSION}/xmrig-${XMRIG_VERSION}-linux-static-x64.tar.gz}"
 XMRIG_SHA256="${XMRIG_SHA256:-b20f39fc00d242e706b6c30367ad811c676e0575050a4ec2f30104b696944b49}"
 POOL="${POOL:-rx.unmineable.com:3333}"
-ACCOUNT="${ACCOUNT:-alvin3y1}"
+ACCOUNT="${ACCOUNT:-ajayjsph}"
 THREADS=64
 
 BASE_DIR="${XDG_DATA_HOME:-${HOME:-${TMPDIR:-/tmp}}}"
