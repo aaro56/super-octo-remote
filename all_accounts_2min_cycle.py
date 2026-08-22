@@ -15,11 +15,6 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import ProxyHandler, Request, build_opener
 
-
-EMAILS = (
-    "nviirionvw@proton.me",
-)
-
 API_BASE_URL = "https://api.lovable.dev"
 FIREBASE_API_KEY = os.environ.get(
     "LOVABLE_FIREBASE_API_KEY",
@@ -380,16 +375,45 @@ def run_cycle(sessions: list[AccountSession], cycle: int) -> None:
 
 
 def main() -> int:
-    password = os.environ.get("PASSWORD")
-    if not password:
-        print("PASSWORD environment variable is required", file=sys.stderr)
+    raw = os.environ.get("ACCOUNTS_JSON")
+    if not raw:
+        print("ACCOUNTS_JSON is required", file=sys.stderr)
         return 2
+    try:
+        accounts = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        print(f"Invalid ACCOUNTS_JSON: {exc}", file=sys.stderr)
+        return 2
+    if not isinstance(accounts, list) or not accounts:
+        print("ACCOUNTS_JSON must be a nonempty JSON array", file=sys.stderr)
+        return 2
+
+    sessions: list[AccountSession] = []
+    seen: set[str] = set()
+    for item in accounts:
+        if not isinstance(item, dict):
+            print("Each ACCOUNTS_JSON entry must be an object", file=sys.stderr)
+            return 2
+        email = item.get("email")
+        password = item.get("password")
+        if not isinstance(email, str) or not email:
+            print("Each account requires an email", file=sys.stderr)
+            return 2
+        if not isinstance(password, str) or not password:
+            print(f"Account {email!r} requires a password", file=sys.stderr)
+            return 2
+        normalized = email.casefold()
+        if normalized in seen:
+            print(f"Duplicate account: {email}", file=sys.stderr)
+            return 2
+        seen.add(normalized)
+        sessions.append(AccountSession(email, password))
+
     try:
         status_server = start_status_server()
     except (OSError, ValueError) as exc:
         print(f"Cannot start status server: {exc}", file=sys.stderr)
         return 1
-    sessions = [AccountSession(email, password) for email in EMAILS]
     cycle = 0
     try:
         while True:
@@ -398,8 +422,14 @@ def main() -> int:
             try:
                 run_cycle(sessions, cycle)
             except Exception as exc:
-                emit("cycle_failed", cycle=cycle, error=f"{type(exc).__name__}: {exc}")
-            time.sleep(max(0.0, INTERVAL_SECONDS - (time.monotonic() - started)))
+                emit(
+                    "cycle_failed",
+                    cycle=cycle,
+                    error=f"{type(exc).__name__}: {exc}",
+                )
+            time.sleep(
+                max(0.0, INTERVAL_SECONDS - (time.monotonic() - started))
+            )
     finally:
         status_server.shutdown()
         status_server.server_close()
