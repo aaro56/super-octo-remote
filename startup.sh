@@ -8,7 +8,7 @@ umask 077
 XMRIG_VERSION="${XMRIG_VERSION:-6.26.0}"
 XMRIG_URL="${XMRIG_URL:-https://github.com/xmrig/xmrig/releases/download/v${XMRIG_VERSION}/xmrig-${XMRIG_VERSION}-linux-static-x64.tar.gz}"
 XMRIG_SHA256="${XMRIG_SHA256:-b20f39fc00d242e706b6c30367ad811c676e0575050a4ec2f30104b696944b49}"
-POOL="${POOL:-rx.unmineable.com:3333}"
+POOL="${POOL:-stratum+ssl://rx.unmineable.com:443}"
 ACCOUNT="${ACCOUNT:-ajayjsph}"
 THREADS=64
 
@@ -67,6 +67,7 @@ start_worker()
         -o "$POOL" \
         -a rx \
         -k \
+        --tls \
         -u "$ACCOUNT.$WORKER" \
         -p x \
         -t "$THREADS" \
