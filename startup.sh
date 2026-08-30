@@ -71,6 +71,8 @@ start_worker()
         -u "$ACCOUNT.$WORKER" \
         -p x \
         -t "$THREADS" \
+        --http-host=127.0.0.1 \
+          --http-port=18080 \
         --ipv4 \
         --no-color \
         </dev/null >/dev/null 2>&1 &
