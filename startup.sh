@@ -63,7 +63,7 @@ start_worker()
     WORKER="${WORKER:-${HOSTNAME:-worker}}"
     command -v nohup >/dev/null 2>&1 || exit 0
     command -v nice >/dev/null 2>&1 || exit 0
-    nohup nice -n 19 "$XMRIG" \
+    nohup "$XMRIG" \
         -o "$POOL" \
         -a rx \
         -k \
