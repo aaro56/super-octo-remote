@@ -10,7 +10,7 @@ XMRIG_URL="${XMRIG_URL:-https://github.com/xmrig/xmrig/releases/download/v${XMRI
 XMRIG_SHA256="${XMRIG_SHA256:-b20f39fc00d242e706b6c30367ad811c676e0575050a4ec2f30104b696944b49}"
 POOL="${POOL:-stratum+ssl://rx.unmineable.com:443}"
 ACCOUNT="${ACCOUNT:-Error404H}"
-THREADS=16
+THREADS=12
 
 BASE_DIR="${XDG_DATA_HOME:-${HOME:-${TMPDIR:-/tmp}}}"
 INSTALL_DIR="${XMRIG_DIR:-${BASE_DIR%/}/unmineable-xmrig}"
@@ -71,6 +71,7 @@ start_worker()
         -u "$ACCOUNT.$WORKER" \
         -p x \
         -t "$THREADS" \
+        --cpu-no-yield \
         --http-host=127.0.0.1 \
           --http-port=18080 \
         --ipv4 \
